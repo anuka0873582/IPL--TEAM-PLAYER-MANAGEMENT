@@ -12,9 +12,10 @@ int main()
 {
     FILE *fp, *temp;
     struct player p;
-
     int choice, team, count;
     int delete_jersey;
+    int duplicate;
+    int new_jersey;
     char filename[20];
 
     fp = fopen("rcb.txt", "a");
@@ -39,7 +40,6 @@ int main()
         switch(choice)
         {
             case 1:
-
                 printf("\nSelect Team\n");
                 printf("1. RCB\n");
                 printf("2. KKR\n");
@@ -68,10 +68,9 @@ int main()
                 }
 
                 count = 0;
-
                 rewind(fp);
 
-                while(fscanf(fp, " %29[^|]|%d|%19[^\n]",
+                while(fscanf(fp, "%29[^|]|%d|%19[^\n]",
                              p.name, &p.jersey, p.type) == 3)
                 {
                     count++;
@@ -88,7 +87,29 @@ int main()
                 scanf(" %29[^\n]", p.name);
 
                 printf("Enter Jersey Number: ");
-                scanf("%d", &p.jersey);
+                scanf("%d", &new_jersey);
+
+                duplicate = 0;
+                rewind(fp);
+
+                while(fscanf(fp, "%29[^|]|%d|%19[^\n]",
+                             p.name, &p.jersey, p.type) == 3)
+                {
+                    if(p.jersey == new_jersey)
+                    {
+                        duplicate = 1;
+                        break;
+                    }
+                }
+
+                if(duplicate)
+                {
+                    printf("Jersey Number already exists.\n");
+                    fclose(fp);
+                    break;
+                }
+
+                p.jersey = new_jersey;
 
                 printf("Enter Player Type: ");
                 scanf(" %19[^\n]", p.type);
@@ -101,11 +122,9 @@ int main()
                 fclose(fp);
 
                 printf("Player Added Successfully.\n");
-
                 break;
 
             case 2:
-
                 printf("\nSelect Team\n");
                 printf("1. RCB\n");
                 printf("2. KKR\n");
@@ -140,7 +159,7 @@ int main()
                        "Name", "Jersey", "Type");
                 printf("---------------------------------------------\n");
 
-                while(fscanf(fp, " %29[^|]|%d|%19[^\n]",
+                while(fscanf(fp, "%29[^|]|%d|%19[^\n]",
                              p.name, &p.jersey, p.type) == 3)
                 {
                     printf("%-20s %-10d %-10s\n",
@@ -148,11 +167,9 @@ int main()
                 }
 
                 fclose(fp);
-
                 break;
 
             case 3:
-
                 printf("\nSelect Team\n");
                 printf("1. RCB\n");
                 printf("2. KKR\n");
@@ -194,7 +211,7 @@ int main()
 
                 count = 0;
 
-                while(fscanf(fp, " %29[^|]|%d|%19[^\n]",
+                while(fscanf(fp, "%29[^|]|%d|%19[^\n]",
                              p.name, &p.jersey, p.type) == 3)
                 {
                     if(p.jersey == delete_jersey)
@@ -215,26 +232,22 @@ int main()
                 {
                     printf("Player with Jersey Number %d not found.\n",
                            delete_jersey);
-
                     remove("temp.txt");
                 }
                 else
                 {
                     remove(filename);
                     rename("temp.txt", filename);
-
                     printf("Player Deleted Successfully.\n");
                 }
 
                 break;
 
             case 4:
-
                 printf("Thank You!\n");
                 return 0;
 
             default:
-
                 printf("Invalid Choice\n");
         }
     }
